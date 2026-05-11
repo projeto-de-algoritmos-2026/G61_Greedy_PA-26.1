@@ -7,6 +7,7 @@
     <title>Nome do Projeto</title>
     <link rel="stylesheet" href="reset.css" />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="gamepad.css" />
   </head>
   <body>
 
@@ -23,6 +24,20 @@
       <p>&copy; 2026</p>
     </footer>
 
-    <script src="main.js"></script>
+    <script type="module" src="main.js"></script>
+
+    <div class="dpad">
+      <button class="up" data-key="up">↑</button>
+      <button class="down" data-key="down">↓</button>
+      <button class="left" data-key="left">←</button>
+      <button class="right" data-key="right">→</button>
+    </div>
+
+    <div class="xyab">
+      <button class="x" data-key="x">X</button>
+      <button class="y" data-key="y">Y</button>
+      <button class="a" data-key="a">A</button>
+      <button class="b" data-key="b">B</button>
+    </div>
   </body>
 </html>

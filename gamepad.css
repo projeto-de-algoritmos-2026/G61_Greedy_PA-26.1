@@ -1,0 +1,239 @@
+/* =======================================================
+   CONTROLES MOBILE - LIGHT/DARK FRIENDLY
+======================================================= */
+
+:root {
+
+    /* Tons neutros adaptáveis */
+    --dpad-bg: rgba(120, 120, 120, 0.22);
+    --dpad-border: rgba(255, 255, 255, 0.18);
+
+    --xyab-bg: rgba(70, 130, 255, 0.35);
+    --xyab-border: rgba(255, 255, 255, 0.22);
+
+    --text-color: rgba(255,255,255,0.92);
+
+    --pressed-bg: rgba(255,255,255,0.32);
+
+    --shadow:
+        0 4px 12px rgba(0,0,0,0.25);
+
+    --blur: blur(10px);
+}
+
+/* =======================================================
+   D-PAD
+======================================================= */
+
+.dpad {
+
+    position: absolute;
+
+    left: 20px;
+
+    bottom: max(20px, env(safe-area-inset-bottom));
+
+    width: min(32vw, 180px);
+    height: min(32vw, 180px);
+}
+
+.dpad button {
+
+    position: absolute;
+
+    width: min(11vw, 60px);
+    height: min(11vw, 60px);
+
+    border-radius: 14px;
+    border: 1px solid var(--dpad-border);
+
+    background: var(--dpad-bg);
+
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+
+    color: var(--text-color);
+
+    font-size: min(5vw, 24px);
+    font-weight: bold;
+
+    box-shadow: var(--shadow);
+
+    transition:
+        transform 0.08s ease,
+        background 0.15s ease,
+        opacity 0.15s ease;
+
+    touch-action: none;
+}
+
+/* =======================================================
+   POSIÇÕES D-PAD
+======================================================= */
+
+.up {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.down {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.left {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.right {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* =======================================================
+   XYAB
+======================================================= */
+
+.xyab {
+
+    position: absolute;
+
+    right: 20px;
+
+    bottom: max(20px, env(safe-area-inset-bottom));
+
+    width: min(32vw, 180px);
+    height: min(32vw, 180px);
+}
+
+.xyab button {
+
+    position: absolute;
+
+    width: min(11vw, 60px);
+    height: min(11vw, 60px);
+
+    border-radius: 50%;
+    border: 1px solid var(--xyab-border);
+
+    background: var(--xyab-bg);
+
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+
+    color: var(--text-color);
+
+    font-size: min(5vw, 22px);
+    font-weight: bold;
+
+    box-shadow: var(--shadow);
+
+    transition:
+        transform 0.08s ease,
+        background 0.15s ease,
+        opacity 0.15s ease;
+
+    touch-action: none;
+}
+
+/* =======================================================
+   POSIÇÕES XYAB
+======================================================= */
+
+.y {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.a {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.x {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.b {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* =======================================================
+   INTERAÇÃO
+======================================================= */
+
+button:active {
+
+    transform:
+        scale(0.93)
+        translateX(-50%);
+}
+
+/* laterais */
+.left:active,
+.right:active,
+.x:active,
+.b:active {
+
+    transform:
+        scale(0.93)
+        translateY(-50%);
+}
+
+/* Hover opcional */
+button:hover {
+
+    opacity: 0.9;
+}
+
+/* =======================================================
+   TELAS MUITO PEQUENAS
+======================================================= */
+
+@media (max-width: 340px) {
+
+    .dpad,
+    .xyab {
+
+        width: 120px;
+        height: 120px;
+    }
+
+    .dpad button,
+    .xyab button {
+
+        width: 42px;
+        height: 42px;
+
+        font-size: 16px;
+    }
+
+    .xyab {
+
+        bottom: 120px;
+    }
+}
+
+/* =======================================================
+   ESCONDER EM NOTEBOOK / DESKTOP
+======================================================= */
+
+@media (min-width: 900px) {
+
+    .dpad,
+    .xyab {
+
+        display: none;
+    }
+}

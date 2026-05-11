@@ -1,5 +1,9 @@
 // main.js — ponto de entrada do JavaScript
 
+import { inputState, initInputButtons } from './gamepad.js';
+
+document.addEventListener("DOMContentLoaded", initInputButtons);
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Projeto iniciado!');
 });
