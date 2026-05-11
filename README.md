@@ -7,7 +7,7 @@ Conteúdo da Disciplina: Greedy<br>
 |Matrícula | Aluno |
 | -- | -- |
 | 231026311 |  Eduardo Valadares |
-| 231027195  |  Caio Venância|
+| 231027195  |  Caio Venâncio|
 
 ## Sobre 
 Descreva os objetivos do seu projeto e como ele funciona. 
@@ -18,7 +18,6 @@ Adicione 3 ou mais screenshots do projeto em funcionamento.
 ## Instalação 
 Linguagem: Java Script<br>
 Framework: (caso exista)<br>
-Descreva os pré-requisitos para rodar o seu projeto e os comandos necessários.
 
 ## Uso 
 Explique como usar seu projeto caso haja algum passo a passo após o comando de execução.
