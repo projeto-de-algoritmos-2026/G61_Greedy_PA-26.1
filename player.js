@@ -1,13 +1,15 @@
 // player.js — Gerencia o jogador e suas funções de movimento
 
 import { tileSize, ctx, canvas } from './map.js';
+import { Inventory } from './inventory.js';
 
 export const player = {
   x: 1, // coluna (começa em um tile navegável)
   y: 1, // linha
   width: tileSize,
   height: tileSize,
-  color: "#FF0000" // vermelho
+  color: "#FF0000",
+  inventory: new Inventory(4)  // vermelho
 };
 
 // Função para desenhar o jogador
