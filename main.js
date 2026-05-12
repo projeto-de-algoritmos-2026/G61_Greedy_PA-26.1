@@ -3,6 +3,7 @@
 import { inputState, initInputButtons } from './gamepad.js';
 import { initializeCanvas, drawMap, ctx, canvas } from './map.js';
 import { drawPlayer, handleInput } from './player.js';
+import { drawNPC } from './npc.js';
 
 document.addEventListener("DOMContentLoaded", initInputButtons);
 
@@ -20,6 +21,7 @@ function gameLoop() {
   // Desenha o mapa e o jogador
   drawMap();
   drawPlayer();
+  drawNPC();
   
   // Processa entrada do jogador
   handleInput();
