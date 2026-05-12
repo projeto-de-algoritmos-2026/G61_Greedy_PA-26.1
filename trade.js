@@ -31,119 +31,118 @@ export function fecharTrade() {
 }
 
 export function drawTradeUI() {
-
     if (!tradeState.ativo) return;
 
     const npc = tradeState.npcAtual;
+    const rectX = 50, rectY = 50, rectW = 420, rectH = 400;
 
+    // Salva o contexto e aplica clipping
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(rectX, rectY, rectW, rectH);
+    ctx.clip();
+
+    // Fundo preto
     ctx.fillStyle = "black";
-
-    ctx.fillRect(50, 50, 420, 320);
+    ctx.fillRect(rectX, rectY, rectW, rectH);
 
     ctx.fillStyle = "white";
-
     ctx.font = "16px Arial";
 
     // =========================================
     // TÍTULO
     // =========================================
-
-    ctx.fillText(
-        `Troca com ${npc.nome}`,
-        70,
-        80
-    );
+    ctx.fillText(`Troca com ${npc.nome}`, rectX + 20, rectY + 30);
 
     // =========================================
     // PESO INVENTÁRIO PLAYER
     // =========================================
-
     ctx.fillText(
         `Carga: ${player.inventory.getCurrentWeight()}kg / ${player.inventory.maxWeight}kg`,
-        70,
-        110
+        rectX + 20,
+        rectY + 60
     );
 
     // =========================================
     // VALOR TOTAL
     // =========================================
-
     let valorTotal = 0;
-
     player.inventory.items.forEach(item => {
-
-        const precoKg =
-            npc.prices[item.id] || 0;
-
-        valorTotal +=
-            precoKg * item.quantidadeKg;
+        const precoKg = npc.prices[item.id] || 0;
+        valorTotal += precoKg * item.quantidadeKg;
     });
-
     ctx.fillText(
         `Valor total: R$ ${valorTotal.toFixed(2)}`,
-        70,
-        140
+        rectX + 20,
+        rectY + 90
     );
 
     // =========================================
-    // ITENS
+    // CABEÇALHO DA LISTA
     // =========================================
+    ctx.fillStyle = "#CCCCCC";
+    ctx.fillText("Item", rectX + 20, rectY + 130);
+    ctx.fillText("Peso", rectX + 180, rectY + 130);
+    ctx.fillText("Valor", rectX + 280, rectY + 130);
+    ctx.fillStyle = "white";
 
-    player.inventory.items.forEach((item, index) => {
+    // =========================================
+    // LISTA DE ITENS (com limite de altura)
+    // =========================================
+    const lineHeight = 25;
+    const startY = rectY + 160;
+    const maxY = rectY + rectH - 70; // espaço reservado para mensagem e controles
+    let currentY = startY;
 
-        const selecionado =
-            index === tradeState.itemSelecionado
-                ? ">"
-                : "";
+    // Número máximo de itens que cabem
+    const maxItems = Math.floor((maxY - startY) / lineHeight);
+    const itemsToShow = player.inventory.items.slice(0, maxItems);
 
-        const precoKg =
-            npc.prices[item.id] || 0;
+    itemsToShow.forEach((item, idx) => {
+        const selecionado = (idx === tradeState.itemSelecionado) ? ">" : " ";
+        let nomeItem = item.nome;
+        // Trunca nome se muito longo (aprox. 15 caracteres)
+        if (ctx.measureText) {
+            const maxWidth = 150;
+            let width = ctx.measureText(nomeItem).width;
+            while (width > maxWidth && nomeItem.length > 3) {
+                nomeItem = nomeItem.slice(0, -1);
+                width = ctx.measureText(nomeItem + "...").width;
+            }
+            if (nomeItem !== item.nome) nomeItem += "...";
+        }
+        const precoKg = npc.prices[item.id] || 0;
+        const valorItem = precoKg * item.quantidadeKg;
 
-        const valorItem =
-            precoKg * item.quantidadeKg;
+        ctx.fillStyle = (idx === tradeState.itemSelecionado) ? "#FFFF00" : "white";
+        ctx.fillText(`${selecionado} ${nomeItem}`, rectX + 20, currentY);
+        ctx.fillText(`${item.quantidadeKg}kg`, rectX + 180, currentY);
+        ctx.fillText(`R$ ${valorItem.toFixed(2)}`, rectX + 280, currentY);
 
-        ctx.fillText(
-            `${selecionado} ${item.nome}`,
-            70,
-            190 + index * 30
-        );
-
-        ctx.fillText(
-            `${item.quantidadeKg}kg`,
-            220,
-            190 + index * 30
-        );
-
-        ctx.fillText(
-            `R$ ${valorItem.toFixed(2)}`,
-            300,
-            190 + index * 30
-        );
+        currentY += lineHeight;
     });
+
+    // Se houver mais itens do que cabem, exibe indicação
+    if (player.inventory.items.length > maxItems) {
+        ctx.fillStyle = "#AAAAAA";
+        ctx.fillText("... mais itens não exibidos ...", rectX + 20, currentY);
+        currentY += lineHeight;
+    }
 
     // =========================================
     // MENSAGEM
     // =========================================
-
     ctx.fillStyle = "#00FF88";
-
-    ctx.fillText(
-        tradeState.mensagem,
-        70,
-        280
-    );
+    ctx.fillText(tradeState.mensagem, rectX + 20, rectY + rectH - 50);
 
     // =========================================
     // CONTROLES
     // =========================================
-
     ctx.fillStyle = "white";
+    ctx.fillText("↑ ↓ selecionar | ENTER trocar | ESC sair", rectX + 20, rectY + rectH - 20);
 
-    ctx.fillText(
-        "↑ ↓ selecionar | ENTER trocar | ESC sair",
-        70,
-        310
-    );
+    // Restaura o contexto (remove clipping)
+    ctx.restore();
 }
 
 export function trocarItem() {

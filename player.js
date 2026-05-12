@@ -9,6 +9,7 @@ export const player = {
   width: tileSize,
   height: tileSize,
   color: "#FF0000",
+  emoji: "🤠", // fazendeiro
   inventory: new Inventory(25)  // vermelho
 };
 
