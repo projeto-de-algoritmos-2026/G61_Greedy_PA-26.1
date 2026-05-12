@@ -62,7 +62,7 @@ export function movePlayer(dx, dy) {
 }
 
 // Sistema de controles com WASD
-const keys = {};
+export const keys = {};
 
 document.addEventListener('keydown', (e) => {
   keys[e.key.toLowerCase()] = true;

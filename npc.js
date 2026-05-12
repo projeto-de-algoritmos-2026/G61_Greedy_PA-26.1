@@ -13,7 +13,7 @@ export const npcs = [
         dialogo: [
             "Bem-vindo à vila!",
             "Os monstros estão atacando ao leste.",
-            "Fique seguro por aqui."
+            "Sou vendedor de abóbora."
         ],
         jaConversou: false,
         inventory: new Inventory(4) 
@@ -27,9 +27,9 @@ export const npcs = [
         width: tileSize,
         height: tileSize,
         dialogo: [
-            "Olá viajante!",
+            "Olá vizinho!",
             "Preciso de ajuda para encontrar minha enxada.",
-            "Você pode me ajudar?"
+            "Sou vendendor de enxadas"
         ],
         jaConversou: false,
         inventory: new Inventory(4)
@@ -44,7 +44,8 @@ export const npcs = [
         height: tileSize,
         dialogo: [
             "Venha comprar meus itens!",
-            "Volte quando tiver dinheiro."
+            "Volte quando tiver algo.",
+            "Vendo feijão"
         ],
         jaConversou: false,
         inventory: new Inventory(4)
@@ -128,8 +129,14 @@ export function encontrarNPCporPosicao(x, y) {
 
 // Função para verificar se jogador está ao lado do NPC (adjacente)
 export function estaProximoDoNPC(playerX, playerY, npcX, npcY) {
-    const distancia = Math.abs(playerX - npcX) + Math.abs(playerY - npcY);
-    return distancia === 1; // Adjacente (cima, baixo, esquerda, direita)
+
+    const dx = playerX - npcX;
+    const dy = playerY - npcY;
+
+    const distancia = Math.hypot(dx, dy);
+    console.log(distancia);
+
+    return distancia < 50;
 }
 
 // Função para obter NPCs próximos ao jogador
