@@ -9,27 +9,21 @@ export const player = {
   width: tileSize,
   height: tileSize,
   color: "#FF0000",
+  emoji: "👨‍🌾", // fazendeiro
   inventory: new Inventory(4)  // vermelho
 };
 
 // Função para desenhar o jogador
 export function drawPlayer() {
-  ctx.fillStyle = player.color;
-  ctx.fillRect(
-    player.x,
-    player.y,
-    player.width,
-    player.height
-  );
+  const fontSize = Math.floor(tileSize * 0.75);
+  ctx.font = `${fontSize}px serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
   
-  // Borda do jogador para melhor visualização
-  ctx.strokeStyle = "#000000";
-  ctx.lineWidth = 2;
-  ctx.strokeRect(
-    player.x,
-    player.y,
-    player.width,
-    player.height
+  ctx.fillText(
+    player.emoji,
+    player.x + player.width / 2,
+    player.y + player.height / 2
   );
 }
 
