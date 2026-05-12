@@ -86,24 +86,35 @@ function drawPlayer() {
   );
 }
 
-// Função para validar se uma posição é navegável (colisão)
-function isWalkable(x, y) {
-  // Verifica se está dentro dos limites do mapa
-  if (y < 0 || y >= mapData.length || x < 0 || x >= mapData[y].length) {
-    return false;
-  }
-  // Verifica se o tile é navegável (1 = navegável, 0 = parede/obstáculo)
-  return mapData[y][x] === 1;
-}
+
 
 // Função para mover o jogador
+// Função para mover o jogador respeitando apenas os limites externos do mapa
 function movePlayer(dx, dy) {
-  const newX = player.x + dx;
-  const newY = player.y + dy;
+  let newX = player.x + dx;
+  let newY = player.y + dy;
   
-  // Valida a nova posição antes de mover
-    player.x = newX;
-    player.y = newY;
+  // Limites máximos do mapa em pixels
+  const maxX = canvas.width - player.width;
+  const maxY = canvas.height - player.height;
+
+  // 1. Eixo X: Impede de sair pela esquerda (0) e pela direita (maxX)
+  if (newX < 0) {
+    newX = 0;
+  } else if (newX > maxX) {
+    newX = maxX;
+  }
+
+  // 2. Eixo Y: Impede de sair por cima (0) e por baixo (maxY)
+  if (newY < 0) {
+    newY = 0;
+  } else if (newY > maxY) {
+    newY = maxY;
+  }
+
+  // Aplica a nova posição validada
+  player.x = newX;
+  player.y = newY;
 }
 
 // Sistema de controles com WASD
@@ -124,6 +135,7 @@ function handleInput() {
   if (keys['a']) movePlayer(-1, 0); // Esquerda
   if (keys['d']) movePlayer(1, 0);  // Direita
 }
+
 
 // Loop do jogo
 function gameLoop() {
