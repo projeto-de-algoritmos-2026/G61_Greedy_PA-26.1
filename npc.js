@@ -210,7 +210,7 @@ export function estaProximoDoNPC(playerX, playerY, npcX, npcY) {
     const dy = playerY - npcY;
 
     const distancia = Math.hypot(dx, dy);
-    console.log(distancia);
+    // console.log(distancia);
 
     return distancia < 50;
 }

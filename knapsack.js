@@ -9,7 +9,7 @@
  * @param {number} capacity - Capacidade máxima da mochila
  * @returns {{ selected: Array, totalValue: number, totalWeight: number }}
  */
-function fractionalKnapsack(items, capacity) {
+export function fractionalKnapsack(items, capacity) {
   // Ordena por razão valor/peso decrescente
   const sorted = [...items].map(item => ({
     ...item,
@@ -46,7 +46,7 @@ function fractionalKnapsack(items, capacity) {
  * @param {object} itemWanted   - item que o jogador quer do NPC
  * @returns {{ accept: boolean, reason: string }}
  */
-function evaluateTrade(npcKnapsack, itemOffered, itemWanted) {
+export function evaluateTrade(npcKnapsack, itemOffered, itemWanted) {
   const { items, capacity } = npcKnapsack;
 
   // Valor atual sem o item que seria trocado

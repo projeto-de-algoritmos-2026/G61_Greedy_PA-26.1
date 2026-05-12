@@ -169,6 +169,7 @@ export class Inventory {
             quantidadeKg
         );
 
+        console.log("os itens são estes agora:",this.items)
         return true;
     }
 }

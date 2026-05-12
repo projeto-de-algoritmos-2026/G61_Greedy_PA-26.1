@@ -1,5 +1,6 @@
 import { ctx } from './map.js';
 import { player } from './player.js';
+import { evaluateTrade } from "./knapsack.js";
 
 export const tradeState = {
 
@@ -157,51 +158,18 @@ export function trocarItem() {
     if (!item) return;
 
     // =========================================
-    // preço do item no NPC
+    // espaço disponível no NPC
     // =========================================
 
-    const precoNovo =
-        npc.prices[item.id] || 0;
+    const pesoAtual =
+        npc.inventory.getCurrentWeight();
 
-    // =========================================
-    // valor atual da mochila do NPC
-    // =========================================
+    const espacoLivre =
+        npc.inventory.maxWeight -
+        pesoAtual;
 
-    let valorAtual = 0;
-
-    let pesoAtual = 0;
-
-    npc.inventory.items.forEach(invItem => {
-
-        const preco =
-            npc.prices[invItem.id] || 0;
-
-        valorAtual +=
-            preco * invItem.quantidadeKg;
-
-        pesoAtual +=
-            invItem.quantidadeKg;
-    });
-
-    // =========================================
-    // densidade econômica atual
-    // valor por kg
-    // =========================================
-
-    const eficienciaAtual =
-        pesoAtual > 0
-            ? valorAtual / pesoAtual
-            : 0;
-
-    // =========================================
-    // simula adicionar item
-    // =========================================
-
-    const novoPeso =
-        pesoAtual + item.quantidadeKg;
-
-    // mochila cheia
-    if (novoPeso > npc.inventory.maxWeight) {
+    // sem espaço
+    if (espacoLivre <= 0) {
 
         tradeState.mensagem =
             `${npc.nome} está sem espaço`;
@@ -209,34 +177,151 @@ export function trocarItem() {
         return;
     }
 
-    const novoValor =
-        valorAtual +
-        (precoNovo * item.quantidadeKg);
-
-    const novaEficiencia =
-        novoValor / novoPeso;
-
     // =========================================
-    // decisão knapsack
+    // quantidade máxima que cabe
     // =========================================
 
-    const aceita =
-        novaEficiencia >= eficienciaAtual;
-
-    if (aceita) {
-
-        player.inventory.transferTo(
-            npc.inventory,
-            item.id,
-            item.quantidadeKg
+    const quantidadeAceita =
+        Math.min(
+            item.quantidadeKg,
+            espacoLivre
         );
 
+    // =========================================
+    // item oferecido
+    // =========================================
+
+    const itemOffered = {
+
+        id: item.id,
+
+        weight: quantidadeAceita,
+
+        value:
+            quantidadeAceita *
+            (npc.prices[item.id] || 0)
+    };
+
+    // =========================================
+    // item "removido"
+    // usamos dummy
+    // =========================================
+
+    const itemWanted = {
+
+        id: -1
+    };
+
+    // =========================================
+    // itens atuais do NPC
+    // =========================================
+
+    const npcItems =
+        npc.inventory.items.map(i => ({
+
+            id: i.id,
+
+            weight: i.quantidadeKg,
+
+            value:
+                i.quantidadeKg *
+                (npc.prices[i.id] || 0)
+        }));
+
+    // =========================================
+    // avaliar troca
+    // =========================================
+
+    const result =
+        evaluateTrade(
+
+            {
+                items: npcItems,
+                capacity:
+                    npc.inventory.maxWeight
+            },
+
+            itemOffered,
+
+            itemWanted
+        );
+
+// =========================================
+// decisão
+// =========================================
+
+if (result.accept) {
+
+    // =====================================
+    // player -> npc
+    // =====================================
+
+    player.inventory.transferTo(
+
+        npc.inventory,
+
+        item.id,
+
+        quantidadeAceita
+    );
+
+    // =====================================
+    // npc -> player
+    // pega item aleatório do npc
+    // =====================================
+
+    const npcItem =
+        npc.inventory.items[
+            Math.floor(
+                Math.random() *
+                npc.inventory.items.length
+            )
+        ];
+
+    if (npcItem) {
+
+        // quanto o player consegue carregar
+        const playerPesoAtual =
+            player.inventory.getCurrentWeight();
+
+        const playerEspacoLivre =
+            player.inventory.maxWeight -
+            playerPesoAtual;
+
+        // quantidade máxima possível
+        const quantidadeRecebida =
+            Math.min(
+                npcItem.quantidadeKg,
+                playerEspacoLivre
+            );
+
+        // transfere
+        if (quantidadeRecebida > 0) {
+
+            npc.inventory.transferTo(
+
+                player.inventory,
+
+                npcItem.id,
+
+                quantidadeRecebida
+            );
+        }
+
         tradeState.mensagem =
-            `${npc.nome} aceitou ${item.nome}`;
+            `${npc.nome} trocou ${quantidadeAceita}kg de ${item.nome} por ${quantidadeRecebida}kg de ${npcItem.nome}`;
 
     } else {
 
         tradeState.mensagem =
-            `${npc.nome} rejeitou ${item.nome}`;
+            `${npc.nome} aceitou ${item.nome}`;
     }
+
+} else {
+
+    tradeState.mensagem =
+        `${npc.nome} rejeitou ${item.nome}`;
+}
+
+console.log(result.reason);
 }
