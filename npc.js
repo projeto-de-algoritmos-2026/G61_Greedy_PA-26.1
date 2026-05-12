@@ -10,6 +10,7 @@ export const npcs = [
         color: "#223399",
         width: tileSize,
         height: tileSize,
+        emoji: "💂", // guarda
         dialogo: [
             "Bem-vindo à vila!",
             "Os monstros estão atacando ao leste.",
@@ -26,6 +27,7 @@ export const npcs = [
         color: "#229933",
         width: tileSize,
         height: tileSize,
+        emoji: "👩", // mulher
         dialogo: [
             "Olá viajante!",
             "Preciso de ajuda para encontrar minha enxada.",
@@ -42,6 +44,7 @@ export const npcs = [
         color: "#992233",
         width: tileSize,
         height: tileSize,
+        emoji: "🧔", // cara com bigode
         dialogo: [
             "Venha comprar meus itens!",
             "Volte quando tiver dinheiro."
@@ -100,23 +103,16 @@ randomizeNPCPositions(npcs, mapData, WALKABLE_VALUES);
 console.log(npcs);
 
 export function drawNPC(){
+    const fontSize = Math.floor(tileSize * 0.75);
+    ctx.font = `${fontSize}px serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    
     npcs.forEach(npc => {
-        ctx.fillStyle = npc.color;
-        ctx.fillRect(
-        npc.x,
-        npc.y,
-        npc.width,
-        npc.height
-        );
-        
-        // Borda do jogador para melhor visualização
-        ctx.strokeStyle = "#000000";
-        ctx.lineWidth = 2;
-        ctx.strokeRect(
-        npc.x,
-        npc.y,
-        npc.width,
-        npc.height
+        ctx.fillText(
+            npc.emoji,
+            npc.x + npc.width / 2,
+            npc.y + npc.height / 2
         );
     })
 }
