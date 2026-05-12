@@ -10,8 +10,14 @@ export const player = {
   height: tileSize,
   color: "#FF0000",
   emoji: "🤠", // fazendeiro
-  inventory: new Inventory(4)  // vermelho
+  inventory: new Inventory(25)  // vermelho
 };
+
+player.inventory.addItem(
+    1,
+    "Milho",
+    25
+);
 
 // Função para desenhar o jogador
 export function drawPlayer() {
@@ -56,7 +62,7 @@ export function movePlayer(dx, dy) {
 }
 
 // Sistema de controles com WASD
-const keys = {};
+export const keys = {};
 
 document.addEventListener('keydown', (e) => {
   keys[e.key.toLowerCase()] = true;
@@ -68,8 +74,8 @@ document.addEventListener('keyup', (e) => {
 
 // Função para processar movimento a cada frame
 export function handleInput() {
-  if (keys['w']) movePlayer(0, -1); // Cima
-  if (keys['s']) movePlayer(0, 1);  // Baixo
-  if (keys['a']) movePlayer(-1, 0); // Esquerda
-  if (keys['d']) movePlayer(1, 0);  // Direita
+  if (keys['w']) movePlayer(0, -2); // Cima
+  if (keys['s']) movePlayer(0, 2);  // Baixo
+  if (keys['a']) movePlayer(-2, 0); // Esquerda
+  if (keys['d']) movePlayer(2, 0);  // Direita
 }

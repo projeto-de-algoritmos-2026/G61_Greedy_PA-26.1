@@ -1,6 +1,24 @@
 import { tileSize, ctx, canvas, mapData } from './map.js';
 import { Inventory } from './inventory.js';
 
+export const ITEM_TYPES = [
+
+    {
+        id: 1,
+        nome: "Milho"
+    },
+
+    {
+        id: 2,
+        nome: "Feijão"
+    },
+
+    {
+        id: 3,
+        nome: "Abóbora"
+    }
+];
+
 export const npcs = [
     {
         id: 0,
@@ -14,10 +32,15 @@ export const npcs = [
         dialogo: [
             "Bem-vindo à vila!",
             "Os monstros estão atacando ao leste.",
-            "Fique seguro por aqui."
+            "Sou vendedor de abóbora."
         ],
         jaConversou: false,
-        inventory: new Inventory(4) 
+        inventory: new Inventory(30),
+        prices: {
+            1: 12.0, // milho
+            2: 7.0, // feijão
+            3: 4.5, // abóbora
+        } 
     },
     {
         id: 1,
@@ -29,12 +52,17 @@ export const npcs = [
         height: tileSize,
         emoji: "👩", // mulher
         dialogo: [
-            "Olá viajante!",
+            "Olá vizinho!",
             "Preciso de ajuda para encontrar minha enxada.",
-            "Você pode me ajudar?"
+            "Sou vendendor de milho"
         ],
         jaConversou: false,
-        inventory: new Inventory(4)
+        inventory: new Inventory(30),
+        prices: {
+            1: 4.5, // milho
+            2: 7.0, // feijão
+            3: 12.0 // abóbora
+        } 
     },
     {
         id: 2,
@@ -47,14 +75,64 @@ export const npcs = [
         emoji: "🧔", // cara com bigode
         dialogo: [
             "Venha comprar meus itens!",
-            "Volte quando tiver dinheiro."
+            "Volte quando tiver algo.",
+            "Vendo feijão"
         ],
         jaConversou: false,
-        inventory: new Inventory(4)
+        inventory: new Inventory(30),
+        prices: {
+            1: 7.0, // milho
+            2: 4.5, // feijão
+            3: 12.0 // abóbora
+        } 
     }
 ];
 
 const WALKABLE_VALUES = [0];
+
+function randomizeNPCInventory(npc) {
+
+    // deixa pelo menos 15kg livres
+    const maxWeightToFill =
+        npc.inventory.maxWeight - 15;
+
+    let currentWeight = 0;
+
+    while (currentWeight < maxWeightToFill) {
+
+        // item aleatório
+        const randomItem =
+            ITEM_TYPES[
+                Math.floor(
+                    Math.random() *
+                    ITEM_TYPES.length
+                )
+            ];
+
+        // quantidade aleatória
+        const quantidadeKg =
+            Math.floor(
+                Math.random() * 5
+            ) + 1;
+
+        // impedir ultrapassar limite
+        if (
+            currentWeight + quantidadeKg >
+            maxWeightToFill
+        ) {
+
+            break;
+        }
+
+        npc.inventory.addItem(
+            randomItem.id,
+            randomItem.nome,
+            quantidadeKg
+        );
+
+        currentWeight += quantidadeKg;
+    }
+}
 
 function randomizeNPCPositions(npcsList, mapData, walkableValues, maxAttempts = 1000) {
     const mapHeight = mapData.length;
@@ -82,6 +160,9 @@ function randomizeNPCPositions(npcsList, mapData, walkableValues, maxAttempts = 
             if (/*isWalkable &&*/isFree) {
                 npc.x = randX;
                 npc.y = randY;
+
+                randomizeNPCInventory(npc);
+
                 occupiedCells.add(cellKey);
                 placed = true;
                 break;
@@ -124,8 +205,14 @@ export function encontrarNPCporPosicao(x, y) {
 
 // Função para verificar se jogador está ao lado do NPC (adjacente)
 export function estaProximoDoNPC(playerX, playerY, npcX, npcY) {
-    const distancia = Math.abs(playerX - npcX) + Math.abs(playerY - npcY);
-    return distancia === 1; // Adjacente (cima, baixo, esquerda, direita)
+
+    const dx = playerX - npcX;
+    const dy = playerY - npcY;
+
+    const distancia = Math.hypot(dx, dy);
+    // console.log(distancia);
+
+    return distancia < 50;
 }
 
 // Função para obter NPCs próximos ao jogador
