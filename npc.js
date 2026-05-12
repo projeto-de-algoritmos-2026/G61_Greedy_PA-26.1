@@ -1,4 +1,5 @@
 import { tileSize, ctx, canvas, mapData } from './map.js';
+import { Inventory } from './inventory.js';
 
 export const npcs = [
     {
@@ -14,7 +15,8 @@ export const npcs = [
             "Os monstros estão atacando ao leste.",
             "Fique seguro por aqui."
         ],
-        jaConversou: false
+        jaConversou: false,
+        inventory: new Inventory(4) 
     },
     {
         id: 1,
@@ -29,7 +31,8 @@ export const npcs = [
             "Preciso de ajuda para encontrar minha enxada.",
             "Você pode me ajudar?"
         ],
-        jaConversou: false
+        jaConversou: false,
+        inventory: new Inventory(4)
     },
     {
         id: 2,
@@ -43,7 +46,8 @@ export const npcs = [
             "Venha comprar meus itens!",
             "Volte quando tiver dinheiro."
         ],
-        jaConversou: false
+        jaConversou: false,
+        inventory: new Inventory(4)
     }
 ];
 
