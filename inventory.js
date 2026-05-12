@@ -1,71 +1,174 @@
 // inventory.js
+
 export class Inventory {
-    constructor(capacity = 10) {
-        this.items = [];      // array de objetos { id, nome, quantidade }
-        this.capacity = capacity;
-    }
 
-    // Adicionar item (ou aumentar quantidade se já existir)
-    addItem(itemId, nome, quantidade = 1) {
-        const existing = this.items.find(i => i.id === itemId);
-        if (existing) {
-            existing.quantidade += quantidade;
-        } else {
-            if (this.items.length >= this.capacity) {
-                console.warn("Inventário cheio!");
-                return false;
-            }
-            this.items.push({ id: itemId, nome, quantidade });
-        }
-        return true;
-    }
+    constructor(maxWeight = 50) {
 
-    // Remover quantidade específica de um item
-    removeItem(itemId, quantidade = 1) {
-        const index = this.items.findIndex(i => i.id === itemId);
-        if (index === -1) return false;
-        
-        const item = this.items[index];
-        if (item.quantidade > quantidade) {
-            item.quantidade -= quantidade;
-        } else if (item.quantidade === quantidade) {
-            this.items.splice(index, 1);
-        } else {
-            return false; // não tem quantidade suficiente
-        }
-        return true;
-    }
+        // capacidade máxima em kg
+        this.maxWeight = maxWeight;
 
-    // Verificar se possui pelo menos X de um item
-    hasItem(itemId, quantidade = 1) {
-        const item = this.items.find(i => i.id === itemId);
-        return item ? item.quantidade >= quantidade : false;
-    }
-
-    // Obter quantidade atual de um item
-    getQuantidade(itemId) {
-        const item = this.items.find(i => i.id === itemId);
-        return item ? item.quantidade : 0;
-    }
-
-    // Listar todos os itens (para exibir no UI)
-    listItems() {
-        return this.items.map(i => `${i.nome} x${i.quantidade}`);
-    }
-
-    // Transferir item de um inventário para outro
-    transferTo(otherInventory, itemId, quantidade = 1) {
-        if (!this.hasItem(itemId, quantidade)) return false;
-        const item = this.items.find(i => i.id === itemId);
-        if (otherInventory.addItem(itemId, item.nome, quantidade)) {
-            this.removeItem(itemId, quantidade);
-            return true;
-        }
-        return false;
-    }
-
-    // Limpar inventário
-    clear() {
+        // itens armazenados
         this.items = [];
+
+        // estrutura:
+        // {
+        //   id,
+        //   nome,
+        //   quantidadeKg
+        // }
+    }
+
+    // =========================================
+    // peso atual
+    // =========================================
+
+    getCurrentWeight() {
+
+        return this.items.reduce(
+            (total, item) =>
+                total + item.quantidadeKg,
+            0
+        );
+    }
+
+    // =========================================
+    // espaço restante
+    // =========================================
+
+    getRemainingWeight() {
+
+        return this.maxWeight -
+               this.getCurrentWeight();
+    }
+
+    // =========================================
+    // adicionar item
+    // =========================================
+
+    addItem(itemId, nome, quantidadeKg) {
+
+        // verifica peso
+        if (
+            this.getCurrentWeight() +
+            quantidadeKg >
+            this.maxWeight
+        ) {
+
+            console.warn(
+                "Peso máximo excedido!"
+            );
+
+            return false;
+        }
+
+        // procura item existente
+        const existing =
+            this.items.find(
+                i => i.id === itemId
+            );
+
+        if (existing) {
+
+            existing.quantidadeKg += quantidadeKg;
+
+        } else {
+
+            this.items.push({
+                id: itemId,
+                nome,
+                quantidadeKg
+            });
+        }
+
+        return true;
+    }
+
+    // =========================================
+    // remover item
+    // =========================================
+
+    removeItem(itemId, quantidadeKg) {
+
+        const item =
+            this.items.find(
+                i => i.id === itemId
+            );
+
+        if (!item) return false;
+
+        if (
+            item.quantidadeKg <
+            quantidadeKg
+        ) {
+
+            return false;
+        }
+
+        item.quantidadeKg -= quantidadeKg;
+
+        // remove item vazio
+        if (item.quantidadeKg <= 0) {
+
+            this.items =
+                this.items.filter(
+                    i => i.id !== itemId
+                );
+        }
+
+        return true;
+    }
+
+    // =========================================
+    // possui quantidade?
+    // =========================================
+
+    hasItem(itemId, quantidadeKg) {
+
+        const item =
+            this.items.find(
+                i => i.id === itemId
+            );
+
+        return item &&
+               item.quantidadeKg >= quantidadeKg;
+    }
+
+    // =========================================
+    // transferir
+    // =========================================
+
+    transferTo(
+        otherInventory,
+        itemId,
+        quantidadeKg
+    ) {
+
+        const item =
+            this.items.find(
+                i => i.id === itemId
+            );
+
+        if (!item) return false;
+
+        // tenta adicionar
+        const added =
+            otherInventory.addItem(
+                item.id,
+                item.nome,
+                quantidadeKg
+            );
+
+        if (!added) {
+
+            return false;
+        }
+
+        // remove do atual
+        this.removeItem(
+            itemId,
+            quantidadeKg
+        );
+
+        return true;
     }
 }
